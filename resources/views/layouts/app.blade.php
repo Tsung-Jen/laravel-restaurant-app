@@ -144,16 +144,42 @@
             </div>
 
             <div class="py-8 border-b border-stone-700">
-                <iframe
-                    src="https://maps.google.com/maps?q=Markt+8,+08451+Crimmitschau&amp;output=embed"
-                    width="100%"
-                    height="280"
-                    style="border:0; border-radius: 0.75rem;"
-                    allowfullscreen
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                    class="shadow-lg"
-                ></iframe>
+                <div x-data="googleMapsConsent" class="relative">
+                    <div
+                        x-show="!consentGiven"
+                        class="bg-stone-800 rounded-xl h-72 flex flex-col items-center justify-center text-center px-6 shadow-lg"
+                    >
+                        <h3 class="text-amber-400 font-semibold text-lg mb-2">@lang('messages.maps_title')</h3>
+                        <p class="text-stone-400 text-sm max-w-md mb-4">
+                            @lang('messages.maps_consent_text')
+                            <a href="#" class="text-amber-400 underline hover:text-amber-300">@lang('messages.maps_privacy_link')</a>.
+                        </p>
+                        <label class="flex items-center gap-2 text-sm text-stone-300 mb-4 cursor-pointer">
+                            <input type="checkbox" x-model="checkboxChecked" class="accent-amber-500 w-4 h-4 rounded border-stone-600 bg-stone-700">
+                            @lang('messages.maps_checkbox_label')
+                        </label>
+                        <button
+                            x-on:click="loadMap"
+                            :disabled="!checkboxChecked"
+                            :class="checkboxChecked ? 'bg-amber-500 text-stone-900 hover:bg-amber-400 cursor-pointer' : 'bg-stone-600 text-stone-500 cursor-not-allowed'"
+                            class="px-6 py-2 rounded-lg font-medium text-sm transition"
+                        >
+                            @lang('messages.maps_load_button')
+                        </button>
+                    </div>
+                    <div x-show="consentGiven" x-cloak>
+                        <iframe
+                            src="https://maps.google.com/maps?q=Markt+8,+08451+Crimmitschau&amp;output=embed"
+                            width="100%"
+                            height="280"
+                            style="border:0; border-radius: 0.75rem;"
+                            allowfullscreen
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            class="shadow-lg"
+                        ></iframe>
+                    </div>
+                </div>
             </div>
 
             <div class="text-center text-sm pt-8">

@@ -75,4 +75,10 @@ return [
     'consent_analytics_description' => '这些Cookie帮助我们了解访问者如何与我们的网站互动。',
     'consent_marketing_label' => '营销',
     'consent_marketing_description' => '这些Cookie用于向访问者展示相关广告。',
+
+    'maps_title' => '显示地图',
+    'maps_consent_text' => '点击"加载地图"即表示您同意将数据传输至 Google LLC（美国）。更多信息请参阅我们的',
+    'maps_checkbox_label' => '我同意加载 Google 地图',
+    'maps_load_button' => '加载地图',
+    'maps_privacy_link' => '隐私政策',
 ];

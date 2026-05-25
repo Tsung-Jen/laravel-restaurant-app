@@ -75,4 +75,10 @@ return [
     'consent_analytics_description' => 'These cookies help us understand how visitors interact with our website.',
     'consent_marketing_label' => 'Marketing',
     'consent_marketing_description' => 'These cookies are used to show relevant advertisements to visitors.',
+
+    'maps_title' => 'Show map',
+    'maps_consent_text' => 'By clicking "Load map" you agree that your data will be transmitted to Google LLC (USA). For more information, see our',
+    'maps_checkbox_label' => 'I agree to load Google Maps',
+    'maps_load_button' => 'Load map',
+    'maps_privacy_link' => 'Privacy Policy',
 ];

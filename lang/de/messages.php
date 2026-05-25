@@ -75,4 +75,10 @@ return [
     'consent_analytics_description' => 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren.',
     'consent_marketing_label' => 'Marketing',
     'consent_marketing_description' => 'Diese Cookies werden verwendet, um Besuchern relevante Werbung anzuzeigen.',
+
+    'maps_title' => 'Karte anzeigen',
+    'maps_consent_text' => 'Mit einem Klick auf "Karte laden" erklären Sie sich damit einverstanden, dass Ihre Daten an Google LLC (USA) übermittelt werden. Weitere Informationen finden Sie in unserer',
+    'maps_checkbox_label' => 'Ich stimme zu, dass Google Maps geladen wird',
+    'maps_load_button' => 'Karte laden',
+    'maps_privacy_link' => 'Datenschutzerklärung',
 ];
