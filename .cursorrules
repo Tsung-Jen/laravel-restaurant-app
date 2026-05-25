@@ -1,0 +1,61 @@
+# Laravel 13 — Restaurant-App
+# Blade (Public Frontend) + Inertia+Vue (Admin Dashboard)
+
+## Modul-Struktur (PSR-4)
+Jedes Business-Feature ist ein eigener Namespace unter app/:
+- app/Reservations/   → Tischreservierung (Model, Controller, Request, Resource)
+- app/Contact/        → Kontaktformular (Model, Controller, Mail, Request)
+- app/Menu/           → PDF-Speisekarte (Controller)
+- app/Dashboard/      → Admin-Übersicht (Controller)
+
+PSR-4 autoloading mapped App\Reservations\ → app/Reservations/ automatisch.
+Kein composer.json-Edit nötig.
+
+Route Model Binding für moduleigene Models in AppServiceProvider registrieren:
+  Route::model('reservation', \App\Reservations\Models\Reservation::class);
+
+## Routing
+- routes/web.php       → Public: Blade-Views, auth-Login/Register, kein auth-Middleware
+- routes/admin.php     → Admin: prefix /admin, middleware ['web','auth','verified']
+- routes/api.php       → API: POST /api/reservations (öffentlich, throttled)
+
+Alle Admin-Routen in bootstrap/app.php geladen per:
+  Route::middleware('web')->group(base_path('routes/admin.php'));
+
+## Blade (Public Frontend)
+- Layout: resources/views/layouts/app.blade.php
+- Alpine.js für Carousel + clientseitige Interaktivität
+- Übersetzungen via @lang('messages.key')
+- Honeypot-Captcha: hidden input name="website" + 'prohibited'-Rule
+- RateLimiter: max 3 Versuche/Minute pro IP auf POST /reservierung
+- Tailwind CSS v4 utility-first, Material-Symbols/per SVG-Icons
+
+## Inertia+Vue (Admin Dashboard)
+- Pages in resources/js/pages/Admin/ → von Controllern via inertia()-Helper gerendert
+- Auth Pages in resources/js/pages/Auth/ → Login/Register ohne AdminLayout
+- AdminLayout in resources/js/layouts/AdminLayout.vue → automatisch per app.js resolve
+- Composition API + `<script setup>`, kein Options-API
+- useForm() für Formulare, router für Navigation/PATCH/DELETE
+- Keine direkten API-Calls im Admin — alles über Inertia (Props + useForm + router)
+
+## Datenbank
+- Reservation::status: open, confirmed, cancelled
+- Contact::read_at: null = ungelesen, datetime = gelesen
+- protected $fillable in Models, casts für type coercion
+- Migrationen immer mit up() + down()
+
+## Lokalisierung (3 Sprachen)
+- Sprachdateien: lang/{de,en,zh_CN}/messages.php + validation.php
+- App::setLocale() im LocaleController, persistiert in Session
+- SetLocale-Middleware (web-Gruppe) setzt Locale pro Request
+- Inertia shared prop 'locale' für Vue-Seiten (über AppServiceProvider)
+
+## Mail
+- Kontaktformular sendet via Mail::to() mit ContactMailable
+- SMTP-Konfiguration in .env (MAIL_*)
+- Reply-To auf Absender-E-Mail setzen
+
+## Speisekarte (PDF)
+- Admin lädt PDF hoch → storage/app/public/menu/speisekarte.pdf
+- Public-Seite embeded per <embed> + Download-Link
+- Kein DB-Model nötig, nur eine Datei die überschrieben wird

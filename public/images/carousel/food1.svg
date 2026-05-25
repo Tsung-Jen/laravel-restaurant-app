@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="800" viewBox="0 0 1920 800">
+  <rect width="1920" height="800" fill="#c0392b"/>
+  <circle cx="960" cy="380" r="200" fill="#e74c3c"/>
+  <ellipse cx="820" cy="350" rx="30" ry="50" fill="#27ae60"/>
+  <ellipse cx="1100" cy="350" rx="30" ry="50" fill="#27ae60"/>
+  <rect x="900" y="500" width="120" height="60" rx="10" fill="#d35400"/>
+  <text x="960" y="200" font-family="sans-serif" font-size="36" fill="white" text-anchor="middle" dominant-baseline="middle">Pasta</text>
+</svg>

@@ -1,0 +1,10 @@
+<?php
+
+return [
+    'date_after_today' => 'Das Datum muss heute oder in der Zukunft liegen.',
+    'guests_min'       => 'Mindestens 1 Person.',
+    'guests_max'       => 'Maximal 99 Personen.',
+    'spam_detected'    => 'Spam erkannt.',
+    'opening_hours'    => 'Das Restaurant ist zu diesem Zeitpunkt geschlossen. Öffnungszeiten: Di/Mi/Fr/Sa/So 11:30–14:30 & 17:30–23:00, Mo 17:30–23:00, Do geschlossen.',
+    'phone_german'     => 'Bitte geben Sie eine gültige deutsche Telefonnummer ein (z. B. +49 123 456789).',
+];
