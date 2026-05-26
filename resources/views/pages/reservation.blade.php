@@ -16,8 +16,32 @@
         </div>
     @endif
 
+    @if (session('large_group'))
+        <div class="bg-blue-50 border border-blue-200 text-blue-700 px-5 py-4 rounded-xl mb-8 flex items-center gap-3 shadow-sm">
+            <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>{{ session('large_group') }}</span>
+        </div>
+    @endif
+
+    @if ($isLunchFull || $isDinnerFull)
+        <div class="space-y-3 mb-6">
+            @if ($isLunchFull)
+                <div class="bg-amber-50 border border-amber-200 text-amber-700 px-5 py-3 rounded-xl text-sm flex items-center gap-3 shadow-sm">
+                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span>@lang('messages.session_lunch'): @lang('messages.session_booked_out')</span>
+                </div>
+            @endif
+            @if ($isDinnerFull)
+                <div class="bg-amber-50 border border-amber-200 text-amber-700 px-5 py-3 rounded-xl text-sm flex items-center gap-3 shadow-sm">
+                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span>@lang('messages.session_dinner'): @lang('messages.session_booked_out')</span>
+                </div>
+            @endif
+        </div>
+    @endif
+
     <div class="bg-white rounded-2xl shadow-lg shadow-stone-200/60 border border-stone-100 p-6 sm:p-8">
-        <form method="POST" action="{{ route('reservation.store') }}" class="space-y-5" x-data="{ submitting: false }" @submit="submitting = true">
+        <form method="POST" action="{{ route('reservation.store') }}" class="space-y-5" x-data="{ submitting: false, guests: {{ old('guests', 2) }} }" @submit="submitting = true">
             @csrf
             <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
 
@@ -31,10 +55,11 @@
 
             <div class="grid sm:grid-cols-2 gap-5">
                 <div>
-                    <label class="block text-sm font-semibold text-stone-700 mb-1.5">@lang('messages.email') <span class="text-red-400">*</span></label>
-                    <input type="email" name="email" value="{{ old('email') }}" required
+                    <label class="block text-sm font-semibold text-stone-700 mb-1.5">@lang('messages.email')</label>
+                    <input type="email" name="email" value="{{ old('email') }}"
                         class="w-full border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-400 transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none @error('email') border-red-300 focus:border-red-400 focus:ring-red-100 @enderror"
                         placeholder="@lang('messages.email_placeholder')">
+                    <p class="text-xs text-stone-400 mt-1">@lang('messages.email_optional_hint')</p>
                     @error('email') <p class="text-red-500 text-sm mt-1.5 flex items-center gap-1"><svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p> @enderror
                 </div>
                 <div>
@@ -49,7 +74,7 @@
             <div class="grid sm:grid-cols-3 gap-5">
                 <div>
                     <label class="block text-sm font-semibold text-stone-700 mb-1.5">@lang('messages.date') <span class="text-red-400">*</span></label>
-                    <input type="date" name="date" value="{{ old('date') }}" required min="{{ date('Y-m-d') }}"
+                    <input type="date" name="date" value="{{ old('date') }}" required min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+2 months')) }}"
                         class="w-full border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none @error('date') border-red-300 focus:border-red-400 focus:ring-red-100 @enderror">
                     @error('date') <p class="text-red-500 text-sm mt-1.5 flex items-center gap-1"><svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p> @enderror
                 </div>
@@ -61,11 +86,17 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-stone-700 mb-1.5">@lang('messages.guests') <span class="text-red-400">*</span></label>
-                    <input type="number" name="guests" value="{{ old('guests', 2) }}" required min="1" max="99"
+                    <input type="number" name="guests" x-model.number="guests" value="{{ old('guests', 2) }}" required min="1" max="99"
                         class="w-full border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none @error('guests') border-red-300 focus:border-red-400 focus:ring-red-100 @enderror"
                         placeholder="2">
                     @error('guests') <p class="text-red-500 text-sm mt-1.5 flex items-center gap-1"><svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p> @enderror
                 </div>
+            </div>
+
+            <div x-show="guests >= 15" x-transition
+                 class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-xl text-sm flex items-center gap-3">
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>@lang('messages.large_group_notice')</span>
             </div>
 
             <div>

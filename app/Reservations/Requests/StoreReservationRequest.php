@@ -3,8 +3,11 @@
 namespace App\Reservations\Requests;
 
 use App\OpeningHours\Services\OpeningHoursService;
+use App\Reservations\Models\Reservation;
+use App\Reservations\Services\ReservationService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 
 class StoreReservationRequest extends FormRequest
 {
@@ -16,11 +19,11 @@ class StoreReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|max:255',
+            'name'    => ['required', 'string', 'min:3', 'max:255'],
+            'email'   => 'nullable|email|max:255',
             'phone'   => ['required', 'string', 'max:20', 'regex:/^(\+49|0)[\d\s\-\/\(\)]{6,18}$/'],
             'guests'  => 'required|integer|min:1|max:99',
-            'date'    => 'required|date|after_or_equal:today',
+            'date'    => ['required', 'date', 'after_or_equal:today', 'before_or_equal:+2 months'],
             'time'    => 'required|date_format:H:i',
             'notes'   => 'nullable|string|max:1000',
             'website' => 'prohibited',
@@ -30,11 +33,13 @@ class StoreReservationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'date.after_or_equal' => __('validation.date_after_today'),
-            'guests.min'          => __('validation.guests_min'),
-            'guests.max'          => __('validation.guests_max'),
-            'website.prohibited'  => __('validation.spam_detected'),
-            'phone.regex'         => __('validation.phone_german'),
+            'date.after_or_equal'  => __('validation.date_after_today'),
+            'date.before_or_equal' => __('validation.advance_date'),
+            'guests.min'           => __('validation.guests_min'),
+            'guests.max'           => __('validation.guests_max'),
+            'name.min'             => __('validation.name_min'),
+            'website.prohibited'   => __('validation.spam_detected'),
+            'phone.regex'          => __('validation.phone_german'),
         ];
     }
 
@@ -43,16 +48,87 @@ class StoreReservationRequest extends FormRequest
         $validator->after(function ($validator) {
             $date = $this->input('date');
             $time = $this->input('time');
+            $guests = (int) $this->input('guests');
+            $email = $this->input('email');
+            $phone = $this->input('phone');
 
             if (! $date || ! $time) {
                 return;
             }
 
-            $service = app(OpeningHoursService::class);
-
-            if (! $service->isOpen($date, $time)) {
+            // Check opening hours
+            $openingHours = app(OpeningHoursService::class);
+            if (! $openingHours->isOpen($date, $time)) {
                 $validator->errors()->add('time', __('validation.opening_hours'));
+                return;
             }
+
+            // Determine session (lunch/dinner)
+            $reservationService = app(ReservationService::class);
+            $session = $reservationService->getSession($time);
+
+            if (! $session) {
+                $validator->errors()->add('time', __('validation.opening_hours'));
+                return;
+            }
+
+            // Advance time check (today only)
+            if ($date === now()->format('Y-m-d')) {
+                $bufferMinutes = 30;
+                $timeMinutes = $this->timeToMinutes($time);
+                $nowMinutes = now()->hour * 60 + now()->minute + $bufferMinutes;
+                if ($timeMinutes <= $nowMinutes) {
+                    $validator->errors()->add('time', __('validation.advance_time'));
+                    return;
+                }
+            }
+
+            // Capacity check (with pessimistic lock to prevent race condition)
+            DB::transaction(function () use ($validator, $date, $session, $guests, $email, $phone) {
+                $existingSum = Reservation::whereDate('date', $date)
+                    ->where('status', '!=', 'cancelled')
+                    ->whereRaw(
+                        "CASE WHEN time >= '11:30' AND time < '14:30' THEN 'lunch' WHEN time >= '17:30' AND time < '23:00' THEN 'dinner' END = ?",
+                        [$session]
+                    )
+                    ->lockForUpdate()
+                    ->sum('guests');
+
+                if ($existingSum + $guests > ReservationService::MAX_CAPACITY) {
+                    $validator->errors()->add('guests', __('validation.session_full'));
+                    return;
+                }
+
+                // Duplicate window check (same email and session within 60 min)
+                if ($email || $phone) {
+                    $recent = Reservation::whereDate('date', $date)
+                        ->where('created_at', '>=', now()->subHour())
+                        ->where(function ($q) use ($email, $phone) {
+                            if ($email) {
+                                $q->orWhere('email', $email);
+                            }
+                            if ($phone) {
+                                $q->orWhere('phone', $phone);
+                            }
+                        })
+                        ->whereRaw(
+                            "CASE WHEN time >= '11:30' AND time < '14:30' THEN 'lunch' WHEN time >= '17:30' AND time < '23:00' THEN 'dinner' END = ?",
+                            [$session]
+                        )
+                        ->lockForUpdate()
+                        ->exists();
+
+                    if ($recent) {
+                        $validator->errors()->add('email', __('validation.duplicate_reservation'));
+                    }
+                }
+            });
         });
+    }
+
+    private function timeToMinutes(string $time): int
+    {
+        [$h, $m] = explode(':', $time);
+        return (int) $h * 60 + (int) $m;
     }
 }

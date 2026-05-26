@@ -17,6 +17,29 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <p class="text-sm text-stone-500 mb-1">Mittagstisch (11:30–14:30)</p>
+                <p class="text-2xl font-bold mb-3" :class="barColor(sessionStats.lunch.booked, sessionStats.lunch.max)">
+                    {{ sessionStats.lunch.booked }} / {{ sessionStats.lunch.max }} Plätze belegt
+                </p>
+                <div class="w-full bg-stone-200 rounded-full h-2.5">
+                    <div class="h-2.5 rounded-full" :class="barFill(sessionStats.lunch.booked, sessionStats.lunch.max)"
+                         :style="{ width: barWidth(sessionStats.lunch.booked, sessionStats.lunch.max) }"></div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <p class="text-sm text-stone-500 mb-1">Abendtisch (17:30–23:00)</p>
+                <p class="text-2xl font-bold mb-3" :class="barColor(sessionStats.dinner.booked, sessionStats.dinner.max)">
+                    {{ sessionStats.dinner.booked }} / {{ sessionStats.dinner.max }} Plätze belegt
+                </p>
+                <div class="w-full bg-stone-200 rounded-full h-2.5">
+                    <div class="h-2.5 rounded-full" :class="barFill(sessionStats.dinner.booked, sessionStats.dinner.max)"
+                         :style="{ width: barWidth(sessionStats.dinner.booked, sessionStats.dinner.max) }"></div>
+                </div>
+            </div>
+        </div>
+
         <h2 class="text-xl font-semibold mb-4">Bevorstehende Reservierungen</h2>
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <table class="w-full text-sm">
@@ -53,6 +76,7 @@
 <script setup>
 defineProps({
     stats: Object,
+    sessionStats: Object,
     upcoming_reservations: Array,
 });
 
@@ -62,5 +86,23 @@ function statusClass(status) {
         confirmed: 'bg-green-100 text-green-800',
         cancelled: 'bg-red-100 text-red-800',
     }[status] || 'bg-stone-100 text-stone-800';
+}
+
+function barWidth(booked, max) {
+    return Math.min(100, (booked / max) * 100) + '%';
+}
+
+function barColor(booked, max) {
+    const ratio = booked / max;
+    if (ratio >= 1) return 'text-red-600';
+    if (ratio >= 0.8) return 'text-orange-600';
+    return 'text-stone-800';
+}
+
+function barFill(booked, max) {
+    const ratio = booked / max;
+    if (ratio >= 1) return 'bg-red-500';
+    if (ratio >= 0.8) return 'bg-orange-400';
+    return 'bg-amber-500';
 }
 </script>
