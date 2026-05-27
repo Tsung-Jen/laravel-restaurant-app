@@ -11,6 +11,7 @@ class AdminHolidayController extends Controller
     public function index()
     {
         $holidays = Holiday::orderBy('date')->get();
+
         return inertia('Admin/Holidays/Index', ['holidays' => $holidays]);
     }
 
@@ -29,6 +30,7 @@ class AdminHolidayController extends Controller
     public function destroy(Holiday $holiday)
     {
         $holiday->delete();
+
         return redirect()->back()->with('success', 'Feiertag entfernt.');
     }
 }

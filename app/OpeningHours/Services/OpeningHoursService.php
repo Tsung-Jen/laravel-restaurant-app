@@ -16,6 +16,7 @@ class OpeningHoursService
         foreach (range(0, 6) as $day) {
             $days[$day] = $rows->get($day)?->toArray() ?? $this->defaults($day);
         }
+
         return $days;
     }
 
@@ -39,6 +40,7 @@ class OpeningHoursService
     public function getActiveVacations(): array
     {
         $today = Carbon::now()->format('Y-m-d');
+
         return Vacation::where('end_date', '>=', $today)
             ->orderBy('start_date')
             ->get()
@@ -59,6 +61,7 @@ class OpeningHoursService
 
         if (! $row) {
             $defaults = $this->defaults($dayOfWeek);
+
             return $this->checkSlot($defaults, $timeMinutes, $date);
         }
 
@@ -106,6 +109,7 @@ class OpeningHoursService
         if (! $start || ! $end) {
             return false;
         }
+
         return $timeMinutes >= $this->timeToMinutes($start)
             && $timeMinutes < $this->timeToMinutes($end);
     }
@@ -113,6 +117,7 @@ class OpeningHoursService
     private function timeToMinutes(string $time): int
     {
         [$h, $m] = explode(':', $time);
+
         return (int) $h * 60 + (int) $m;
     }
 

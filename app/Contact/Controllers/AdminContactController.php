@@ -3,7 +3,6 @@
 namespace App\Contact\Controllers;
 
 use App\Contact\Models\Contact;
-use Illuminate\Http\Request;
 
 class AdminContactController extends Controller
 {

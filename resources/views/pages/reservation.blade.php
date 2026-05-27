@@ -41,9 +41,10 @@
     @endif
 
     <div class="bg-white rounded-2xl shadow-lg shadow-stone-200/60 border border-stone-100 p-6 sm:p-8">
-        <form method="POST" action="{{ route('reservation.store') }}" class="space-y-5" x-data="{ submitting: false, guests: {{ old('guests', 2) }} }" @submit="submitting = true">
+        <form method="POST" action="{{ route('reservation.store') }}" class="space-y-5" x-data="{ submitting: false, guests: {{ old('guests', 2) }}, formLoadedAt: Date.now() }" @submit="submitting = true">
             @csrf
             <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off">
+            <input type="hidden" name="form_loaded_at" :value="formLoadedAt">
 
             <div>
                 <label class="block text-sm font-semibold text-stone-700 mb-1.5">@lang('messages.name') <span class="text-red-400">*</span></label>
@@ -104,6 +105,10 @@
                 <textarea name="notes" rows="3" placeholder="@lang('messages.notes_placeholder')"
                     class="w-full border-2 border-stone-200 rounded-xl px-4 py-3 text-stone-800 placeholder-stone-400 transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none @error('notes') border-red-300 focus:border-red-400 focus:ring-red-100 @enderror">{{ old('notes') }}</textarea>
                 @error('notes') <p class="text-red-500 text-sm mt-1.5 flex items-center gap-1"><svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p> @enderror
+            </div>
+
+            <div class="pt-2">
+                <x-turnstile :challenge="$challenge" error="{{ $errors->first('cf-turnstile-response') ?: $errors->first('challenge_answer') }}" />
             </div>
 
             <button type="submit" :disabled="submitting"

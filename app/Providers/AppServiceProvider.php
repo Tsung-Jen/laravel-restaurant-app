@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Contact\Models\Contact;
-use App\OpeningHours\Models\OpeningHour;
 use App\OpeningHours\Models\Holiday;
+use App\OpeningHours\Models\OpeningHour;
 use App\OpeningHours\Models\Vacation;
 use App\Reservations\Models\Reservation;
 use Carbon\Carbon;
@@ -63,12 +63,12 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $view->with('footerHours', $hours)
-                 ->with('footerHolidays', $holidays)
-                 ->with('footerCurrentWeek', $currentWeek)
-                 ->with('footerVacations', $futureVacations)
-                 ->with('footerOnVacation', $onVacationNow)
-                 ->with('footerDayOnVacation', $footerDayOnVacation)
-                 ->with('footerDayDates', $footerDayDates);
+                ->with('footerHolidays', $holidays)
+                ->with('footerCurrentWeek', $currentWeek)
+                ->with('footerVacations', $futureVacations)
+                ->with('footerOnVacation', $onVacationNow)
+                ->with('footerDayOnVacation', $footerDayOnVacation)
+                ->with('footerDayDates', $footerDayDates);
         });
     }
 }

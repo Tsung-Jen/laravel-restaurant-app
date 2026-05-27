@@ -11,6 +11,7 @@ class AdminVacationController extends Controller
     public function index()
     {
         $vacations = Vacation::orderBy('start_date')->get();
+
         return inertia('Admin/Vacations/Index', ['vacations' => $vacations]);
     }
 
@@ -30,6 +31,7 @@ class AdminVacationController extends Controller
     public function destroy(Vacation $vacation)
     {
         $vacation->delete();
+
         return redirect()->back()->with('success', 'Urlaub entfernt.');
     }
 }

@@ -3,12 +3,11 @@
 namespace App\Reservations\Services;
 
 use App\Reservations\Models\Reservation;
-use Illuminate\Support\Facades\DB;
 
 class ReservationService
 {
     const SESSIONS = [
-        'lunch'  => ['start' => '11:30', 'end' => '14:30'],
+        'lunch' => ['start' => '11:30', 'end' => '14:30'],
         'dinner' => ['start' => '17:30', 'end' => '23:00'],
     ];
 
@@ -59,6 +58,7 @@ class ReservationService
     private function timeToMinutes(string $time): int
     {
         [$h, $m] = explode(':', $time);
+
         return (int) $h * 60 + (int) $m;
     }
 }

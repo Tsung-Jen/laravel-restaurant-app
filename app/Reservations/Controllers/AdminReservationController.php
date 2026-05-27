@@ -3,7 +3,6 @@
 namespace App\Reservations\Controllers;
 
 use App\Reservations\Models\Reservation;
-use App\Reservations\Resources\ReservationResource;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;

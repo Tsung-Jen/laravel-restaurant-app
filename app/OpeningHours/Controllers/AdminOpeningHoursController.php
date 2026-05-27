@@ -11,6 +11,7 @@ class AdminOpeningHoursController extends Controller
     public function index()
     {
         $hours = OpeningHour::orderBy('day_of_week')->get();
+
         return inertia('Admin/OpeningHours/Index', ['hours' => $hours]);
     }
 
