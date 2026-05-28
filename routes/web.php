@@ -4,6 +4,7 @@ use App\Contact\Controllers\ContactController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\LocaleController;
+use App\Imprint\Controllers\ImprintController;
 use App\Menu\Controllers\PublicMenuController;
 use App\Reservations\Controllers\PublicReservationController;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,8 @@ Route::get('/speisekarte', [PublicMenuController::class, 'show'])->name('menu.sh
 
 Route::get('/kontakt', [ContactController::class, 'create'])->name('contact.create');
 Route::post('/kontakt', [ContactController::class, 'store'])->name('contact.store');
+
+Route::get('/impressum', [ImprintController::class, 'show'])->name('imprint.show');
 
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 

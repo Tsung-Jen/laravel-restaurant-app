@@ -182,8 +182,10 @@
                 </div>
             </div>
 
-            <div class="text-center text-sm pt-8">
-                &copy; {{ date('Y') }} {{ config('app.name') }}. @lang('messages.all_rights')
+            <div class="text-center text-sm pt-8 flex items-center justify-center gap-4">
+                <a href="{{ route('imprint.show') }}" class="hover:text-amber-400 transition">@lang('messages.imprint')</a>
+                <span class="text-stone-600">|</span>
+                <span>&copy; {{ date('Y') }} {{ config('app.name') }}. @lang('messages.all_rights')</span>
             </div>
         </div>
     </footer>
