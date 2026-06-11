@@ -10,6 +10,9 @@
                             <Link :href="route('admin.reservations.index')" class="hover:text-amber-700">Reservierungen</Link>
                             <Link :href="route('admin.contacts.index')" class="hover:text-amber-700">Kontakte</Link>
                             <Link :href="route('admin.menu.edit')" class="hover:text-amber-700">Speisekarte</Link>
+                            <Link :href="route('admin.ordering.menu-items.index')" class="hover:text-amber-700">Artikel</Link>
+                            <Link :href="route('admin.ordering.categories.index')" class="hover:text-amber-700">Kategorien</Link>
+                            <Link :href="route('admin.ordering.orders.index')" class="hover:text-amber-700">Bestellungen</Link>
                             <Link :href="route('admin.opening-hours.index')" class="hover:text-amber-700">Öffnungszeiten</Link>
                             <Link :href="route('admin.holidays.index')" class="hover:text-amber-700">Feiertage</Link>
                             <Link :href="route('admin.vacations.index')" class="hover:text-amber-700">Urlaub</Link>

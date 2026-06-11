@@ -18,6 +18,7 @@
                 <div class="flex items-center gap-6 text-sm">
                     <a href="{{ route('home') }}" class="hover:text-amber-700 transition">@lang('messages.home')</a>
                     <a href="{{ route('menu.show') }}" class="hover:text-amber-700 transition">@lang('messages.menu')</a>
+                    <a href="{{ route('order.index') }}" class="hover:text-amber-700 transition">@lang('messages.order')</a>
                     <a href="{{ route('reservation.create') }}" class="hover:text-amber-700 transition">@lang('messages.reservation')</a>
                     <a href="{{ route('contact.create') }}" class="hover:text-amber-700 transition">@lang('messages.contact')</a>
                     <div class="flex gap-2 ml-4 pl-4 border-l border-stone-200">

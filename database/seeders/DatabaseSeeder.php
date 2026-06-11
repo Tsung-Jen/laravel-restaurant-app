@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(OpeningHourSeeder::class);
         $this->call(HolidaySeeder::class);
+        $this->call(CategorySeeder::class);
 
         if (! User::where('email', 'admin@restaurant.com')->exists()) {
             User::factory()->create([

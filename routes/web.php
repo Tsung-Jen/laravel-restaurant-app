@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\LocaleController;
 use App\Imprint\Controllers\ImprintController;
 use App\Menu\Controllers\PublicMenuController;
+use App\Ordering\Controllers\CartController;
+use App\Ordering\Controllers\OrderController;
 use App\Reservations\Controllers\PublicReservationController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,3 +34,12 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [AuthController::class, 'destroy'])->name('logout')->middleware('auth');
+
+Route::get('/speisekarte/bestellen', [OrderController::class, 'index'])->name('order.index');
+Route::post('/bestellung/abschliessen', [OrderController::class, 'store'])->name('order.store');
+
+Route::get('/warenkorb', [CartController::class, 'show'])->name('cart.show');
+Route::post('/warenkorb/hinzufuegen', [CartController::class, 'add'])->name('cart.add');
+Route::post('/warenkorb/aktualisieren', [CartController::class, 'update'])->name('cart.update');
+Route::post('/warenkorb/entfernen', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/warenkorb/leeren', [CartController::class, 'clear'])->name('cart.clear');
