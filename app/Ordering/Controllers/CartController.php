@@ -25,10 +25,11 @@ class CartController
         $data = $request->validate([
             'item_id' => 'required|exists:menu_items,id',
             'quantity' => 'integer|min:1|max:99',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         $item = MenuItem::findOrFail($data['item_id']);
-        $cart->add($item, $data['quantity'] ?? 1);
+        $cart->add($item, $data['quantity'] ?? 1, $data['notes'] ?? '');
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -39,6 +40,26 @@ class CartController
         }
 
         return redirect()->back()->with('success', __('messages.cart_added', ['item' => $item->name]));
+    }
+
+    public function updateNotes(Request $request, CartService $cart)
+    {
+        $data = $request->validate([
+            'item_id' => 'required|integer',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $cart->updateNotes($data['item_id'], $data['notes'] ?? '');
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'items' => $cart->items(),
+                'count' => $cart->count(),
+                'total' => $cart->total(),
+            ]);
+        }
+
+        return redirect()->back();
     }
 
     public function update(Request $request, CartService $cart)

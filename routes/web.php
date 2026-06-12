@@ -43,3 +43,4 @@ Route::post('/warenkorb/hinzufuegen', [CartController::class, 'add'])->name('car
 Route::post('/warenkorb/aktualisieren', [CartController::class, 'update'])->name('cart.update');
 Route::post('/warenkorb/entfernen', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/warenkorb/leeren', [CartController::class, 'clear'])->name('cart.clear');
+Route::post('/warenkorb/notiz', [CartController::class, 'updateNotes'])->name('cart.notes');

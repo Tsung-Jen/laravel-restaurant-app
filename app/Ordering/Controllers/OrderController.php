@@ -42,6 +42,7 @@ class OrderController
                 'item_number' => $item['item_number'],
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],
+                'notes' => $item['notes'] ?? null,
             ]);
         }
 

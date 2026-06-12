@@ -157,4 +157,11 @@ return [
     'imprint_content_text' => 'Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.',
     'imprint_copyright_heading' => 'Urheberrecht',
     'imprint_copyright_text' => 'Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.',
+    'add_note' => 'Notiz hinzufügen',
+    'add_note_for' => 'Notiz hinzufügen für',
+    'edit_note_for' => 'Notiz bearbeiten für',
+    'note_placeholder' => 'z.B. kein Chili, extra Soße, ...',
+    'no_note' => 'Keine Notiz',
+    'cancel' => 'Abbrechen',
+    'save' => 'Speichern',
 ];

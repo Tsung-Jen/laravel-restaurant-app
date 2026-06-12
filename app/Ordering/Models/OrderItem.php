@@ -13,6 +13,7 @@ class OrderItem extends Model
         'item_number',
         'price',
         'quantity',
+        'notes',
     ];
 
     protected function casts(): array

@@ -157,4 +157,11 @@ return [
     'imprint_content_text' => 'The contents of our pages were created with the greatest care. However, we cannot assume any liability for the correctness, completeness and topicality of the contents.',
     'imprint_copyright_heading' => 'Copyright',
     'imprint_copyright_text' => 'The content and works created by the site operators on these pages are subject to German copyright law. Duplication, processing, distribution and any form of commercialization of such material beyond the scope of the copyright law shall require the prior written consent of its respective author or creator.',
+    'add_note' => 'Add note',
+    'add_note_for' => 'Add note for',
+    'edit_note_for' => 'Edit note for',
+    'note_placeholder' => 'e.g. no chili, extra sauce, ...',
+    'no_note' => 'No note',
+    'cancel' => 'Cancel',
+    'save' => 'Save',
 ];

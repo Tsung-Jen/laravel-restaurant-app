@@ -8,13 +8,16 @@ class CartService
 {
     private const SESSION_KEY = 'ordering_cart';
 
-    public function add(MenuItem $item, int $quantity = 1): void
+    public function add(MenuItem $item, int $quantity = 1, string $notes = ''): void
     {
         $cart = $this->getCart();
         $id = $item->id;
 
         if (isset($cart[$id])) {
             $cart[$id]['quantity'] += $quantity;
+            if ($notes) {
+                $cart[$id]['notes'] = $notes;
+            }
         } else {
             $cart[$id] = [
                 'menu_item_id' => $item->id,
@@ -22,10 +25,21 @@ class CartService
                 'item_number' => $item->item_number,
                 'price' => $item->price,
                 'quantity' => $quantity,
+                'notes' => $notes,
             ];
         }
 
         session()->put(self::SESSION_KEY, $cart);
+    }
+
+    public function updateNotes(int $itemId, string $notes): void
+    {
+        $cart = $this->getCart();
+
+        if (isset($cart[$itemId])) {
+            $cart[$itemId]['notes'] = $notes;
+            session()->put(self::SESSION_KEY, $cart);
+        }
     }
 
     public function update(int $itemId, int $quantity): void

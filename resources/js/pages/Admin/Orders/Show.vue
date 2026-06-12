@@ -26,7 +26,13 @@
                         <tbody class="divide-y divide-stone-100">
                             <tr v-for="item in order.items" :key="item.id">
                                 <td class="px-4 py-2 font-mono text-xs text-stone-500">{{ item.item_number }}</td>
-                                <td class="px-4 py-2">{{ item.item_name }}</td>
+                                <td class="px-4 py-2">
+                                    <div>{{ item.item_name }}</div>
+                                    <div v-if="item.notes" class="text-xs text-stone-500 italic mt-0.5 flex items-center gap-1">
+                                        <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        <span>{{ item.notes }}</span>
+                                    </div>
+                                </td>
                                 <td class="px-4 py-2">{{ item.quantity }}</td>
                                 <td class="px-4 py-2 text-right">&euro; {{ Number(item.price).toFixed(2) }}</td>
                                 <td class="px-4 py-2 text-right font-semibold">&euro; {{ (Number(item.price) * item.quantity).toFixed(2) }}</td>

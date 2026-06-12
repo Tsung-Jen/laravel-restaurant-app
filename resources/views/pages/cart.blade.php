@@ -6,15 +6,37 @@
 <div
     x-data="{
         orderPlaced: {{ session('order_placed') ? 'true' : 'false' }},
-        items: {{ json_encode(array_map(fn($i) => ['menu_item_id' => $i['menu_item_id'], 'item_name' => $i['item_name'], 'item_number' => $i['item_number'], 'price' => (float)$i['price'], 'quantity' => (int)$i['quantity']], $cartItems)) }},
+        items: {{ json_encode(array_map(fn($i) => ['menu_item_id' => $i['menu_item_id'], 'item_name' => $i['item_name'], 'item_number' => $i['item_number'], 'price' => (float)$i['price'], 'quantity' => (int)$i['quantity'], 'notes' => $i['notes'] ?? ''], $cartItems)) }},
         total: {{ $cartTotal }},
         count: {{ $cartCount }},
         empty: {{ $cartEmpty ? 'true' : 'false' }},
         pending: new Set(),
+        noteItem: null,
+        noteText: '',
         recalc() {
             this.total = this.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
             this.count = this.items.reduce((sum, i) => sum + i.quantity, 0);
             this.empty = this.items.length === 0;
+        },
+        openNoteModal(item) { this.noteItem = item; this.noteText = item.notes || ''; document.body.classList.add('overflow-hidden'); },
+        closeNoteModal() { this.noteItem = null; this.noteText = ''; document.body.classList.remove('overflow-hidden'); },
+        async saveNote() {
+            if (!this.noteItem) return;
+            const formData = new FormData();
+            formData.append('item_id', this.noteItem.menu_item_id);
+            formData.append('notes', this.noteText);
+            try {
+                const res = await fetch('{{ route('cart.notes') }}', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: formData,
+                });
+                const data = await res.json();
+                this.items = data.items;
+                this.total = data.total;
+                this.count = data.count;
+            } catch (e) {}
+            this.closeNoteModal();
         },
         async updateQty(itemId, qty) {
             if (qty < 1) { this.removeItem(itemId); return; }
@@ -128,8 +150,24 @@
                     <template x-for="(item, idx) in items" :key="item.menu_item_id">
                         <tr class="hover:bg-stone-50/50 transition">
                             <td class="px-5 py-4">
-                                <span class="text-xs font-mono text-stone-400 bg-stone-100 px-2 py-0.5 rounded" x-text="item.item_number"></span>
-                                <span class="ml-2 text-stone-800 font-medium" x-text="item.item_name"></span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-mono text-stone-400 bg-stone-100 px-2 py-0.5 rounded" x-text="item.item_number"></span>
+                                    <span class="text-stone-800 font-medium" x-text="item.item_name"></span>
+                                </div>
+                                <div class="mt-1 text-xs text-stone-500 italic flex items-center gap-1">
+                                    <template x-if="item.notes">
+                                        <span class="flex items-center gap-1">
+                                            <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                            <span x-text="item.notes"></span>
+                                        </span>
+                                    </template>
+                                    <template x-if="!item.notes">
+                                        <span class="text-stone-400">@lang('messages.no_note')</span>
+                                    </template>
+                                    <button @click="openNoteModal(item)" class="ml-1 text-amber-600 hover:text-amber-700 transition">
+                                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                    </button>
+                                </div>
                             </td>
                             <td class="px-3 py-4">
                                 <div class="flex items-center justify-center gap-1">
@@ -215,6 +253,28 @@
                     @lang('messages.place_order')
                 </button>
             </form>
+        </div>
+    </div>
+
+    <div x-show="noteItem" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape="closeNoteModal">
+        <div class="fixed inset-0 bg-black/50" @click="closeNoteModal"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 z-10">
+            <div class="flex items-start justify-between mb-4">
+                <h3 class="text-lg font-bold text-stone-800">
+                    @lang('messages.edit_note_for') <span class="text-amber-600" x-text="noteItem?.item_name"></span>
+                </h3>
+                <button @click="closeNoteModal" class="text-stone-400 hover:text-stone-600 transition p-1">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <textarea x-model="noteText" class="w-full border-2 border-stone-200 rounded-xl px-4 py-3 text-sm text-stone-800 transition focus:border-amber-400 focus:ring-4 focus:ring-amber-100 outline-none resize-none" rows="3" placeholder="@lang('messages.note_placeholder')" maxlength="500"></textarea>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-stone-100">
+                <span class="text-xs text-stone-400" x-text="noteText.length + '/500'"></span>
+                <div class="flex gap-2">
+                    <button @click="closeNoteModal" class="border border-stone-300 hover:bg-stone-50 text-stone-700 px-4 py-2 rounded-xl text-sm font-medium transition">@lang('messages.cancel')</button>
+                    <button @click="saveNote" class="bg-amber-600 hover:bg-amber-500 text-white px-5 py-2 rounded-xl text-sm font-semibold transition">@lang('messages.save')</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -157,4 +157,11 @@ return [
     'imprint_content_text' => '我们页面的内容已尽最大努力创建。但是，我们不对内容的正确性、完整性和时效性承担任何责任。',
     'imprint_copyright_heading' => '版权',
     'imprint_copyright_text' => '这些页面上由网站运营者创建的内容和作品受德国版权法保护。超出版权法范围的复制、处理、分发和任何形式的商业化都需要获得相应作者或创作者的事先书面同意。',
+    'add_note' => '添加备注',
+    'add_note_for' => '为以下菜品添加备注',
+    'edit_note_for' => '编辑备注',
+    'note_placeholder' => '例如：不要辣椒，多加酱料...',
+    'no_note' => '无备注',
+    'cancel' => '取消',
+    'save' => '保存',
 ];
