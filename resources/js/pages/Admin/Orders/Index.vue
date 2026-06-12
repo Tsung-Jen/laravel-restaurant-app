@@ -49,6 +49,8 @@
                         </td>
                         <td class="px-4 py-3">
                             <Link :href="route('admin.ordering.orders.show', o.id)" class="text-amber-600 hover:text-amber-800 text-xs">Details</Link>
+                            <button v-if="o.status === 'pending'" @click="updateStatus(o.id, 'confirmed')" class="text-emerald-600 hover:text-emerald-800 text-xs ml-2">Bestätigen</button>
+                            <button v-if="o.status !== 'cancelled'" @click="updateStatus(o.id, 'cancelled')" class="text-red-600 hover:text-red-800 text-xs ml-2">Stornieren</button>
                         </td>
                     </tr>
                     <tr v-if="orders.data.length === 0">
@@ -80,5 +82,9 @@ const filters = ref({
 
 function applyFilters() {
     router.get(route('admin.ordering.orders.index'), filters.value, { preserveState: true });
+}
+
+function updateStatus(id, status) {
+    router.patch(route('admin.ordering.orders.status', id), { status }, { preserveScroll: true });
 }
 </script>

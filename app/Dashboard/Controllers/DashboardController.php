@@ -3,6 +3,7 @@
 namespace App\Dashboard\Controllers;
 
 use App\Contact\Models\Contact;
+use App\Ordering\Models\Order;
 use App\Reservations\Models\Reservation;
 use App\Reservations\Services\ReservationService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -20,6 +21,7 @@ class DashboardController extends BaseController
 
         $todayReservations = Reservation::whereDate('date', $today)->count();
         $pendingReservations = Reservation::where('status', 'open')->count();
+        $pendingOrders = Order::where('status', 'pending')->count();
         $unreadContacts = Contact::whereNull('read_at')->count();
 
         $lunchBooked = $service->getBookedCount($today, 'lunch');
@@ -31,10 +33,17 @@ class DashboardController extends BaseController
             ->take(10)
             ->get();
 
+        $pendingOrdersList = Order::where('status', 'pending')
+            ->withCount('items')
+            ->latest()
+            ->take(10)
+            ->get();
+
         return inertia('Admin/Dashboard', [
             'stats' => [
                 'today_reservations' => $todayReservations,
                 'pending_reservations' => $pendingReservations,
+                'pending_orders' => $pendingOrders,
                 'unread_contacts' => $unreadContacts,
             ],
             'sessionStats' => [
@@ -48,6 +57,7 @@ class DashboardController extends BaseController
                 ],
             ],
             'upcoming_reservations' => $upcomingReservations,
+            'pending_orders_list' => $pendingOrdersList,
         ]);
     }
 }

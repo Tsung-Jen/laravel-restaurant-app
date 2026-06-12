@@ -95,11 +95,11 @@
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     order: Object,
 });
 
 function updateStatus(status) {
-    router.patch(route('admin.ordering.orders.status', order.id), { status }, { preserveScroll: true });
+    router.patch(route('admin.ordering.orders.status', props.order.id), { status }, { preserveScroll: true });
 }
 </script>

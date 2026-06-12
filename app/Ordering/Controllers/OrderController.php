@@ -47,7 +47,7 @@ class OrderController
 
         $cart->clear();
 
-        return redirect()->route('order.index')
-            ->with('success', __('messages.order_placed'));
+        return redirect()->route('cart.show')
+            ->with('order_placed', true);
     }
 }

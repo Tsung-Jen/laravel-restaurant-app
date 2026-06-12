@@ -5,6 +5,7 @@
 @section('content')
 <div
     x-data="{
+        orderPlaced: {{ session('order_placed') ? 'true' : 'false' }},
         items: {{ json_encode(array_map(fn($i) => ['menu_item_id' => $i['menu_item_id'], 'item_name' => $i['item_name'], 'item_number' => $i['item_number'], 'price' => (float)$i['price'], 'quantity' => (int)$i['quantity']], $cartItems)) }},
         total: {{ $cartTotal }},
         count: {{ $cartCount }},
@@ -75,6 +76,18 @@
     }"
     class="max-w-3xl mx-auto px-4 py-8 sm:py-12"
 >
+    <div x-show="orderPlaced" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-black/50" @click="orderPlaced = false"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 z-10 text-center">
+            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-stone-800 mb-3">@lang('messages.order_placed')</h3>
+            <p class="text-stone-600 text-sm leading-relaxed mb-6">@lang('messages.order_success_modal')</p>
+            <button @click="orderPlaced = false" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2.5 rounded-xl font-semibold transition">OK</button>
+        </div>
+    </div>
+
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-3xl font-bold text-stone-800">@lang('messages.cart')</h1>

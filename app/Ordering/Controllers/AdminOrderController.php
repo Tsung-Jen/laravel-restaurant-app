@@ -42,7 +42,7 @@ class AdminOrderController
 
         $order->update($validated);
 
-        return redirect()->route('admin.ordering.orders.show', $order)
+        return redirect()->back()
             ->with('success', __('messages.order_status_updated'));
     }
 }
